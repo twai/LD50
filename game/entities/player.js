@@ -7,6 +7,10 @@ function createPlayer(scene, x, y) {
     sprite.setCollideWorldBounds(true);
     sprite.parent = scene;
     sprite.pressed = {right: 0, left: 0};
+
+    sprite.allowVerticalMovement = true;
+    sprite.allowMovement = true;
+
     // console.log(sprite.);
 
     if(scene.cursors == undefined) {
@@ -24,18 +28,26 @@ function createPlayer(scene, x, y) {
             return;
         }
 
-        if(scene.cursors.left.isDown) {
-            velocity.x -= 1;
+        if(this.allowMovement) {
+            if(scene.cursors.left.isDown) {
+                velocity.x -= 1;
+            }
+            if(scene.cursors.right.isDown) {
+                velocity.x += 1;
+            }
+    
+            if(this.allowVerticalMovement) {
+                if(scene.cursors.up.isDown) {
+                    velocity.y -= 1;
+                }
+                if(scene.cursors.down.isDown) {
+                    velocity.y += 1;
+                }
+            }
         }
-        if(scene.cursors.right.isDown) {
-            velocity.x += 1;
-        }
-        if(scene.cursors.up.isDown) {
-            velocity.y -= 1;
-        }
-        if(scene.cursors.down.isDown) {
-            velocity.y += 1;
-        }
+
+
+
 
         if(velocity.length() > 0) {
             velocity.normalize();

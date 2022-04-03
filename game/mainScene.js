@@ -1,3 +1,5 @@
+const MINIGAMES = ['dodgeball', 'arrows']
+
 class MainScene extends Phaser.Scene {
     constructor() {
         super('MainScene');
@@ -93,7 +95,8 @@ class MainScene extends Phaser.Scene {
         if(this.cursors.space.isDown && this.physics.overlap(this.player, this.portal)) {
             this.scene.pause();
             this.scene.setVisible(false);
-            this.scene.launch('dodgeball', {difficultyLevel: Phaser.Math.Between(1, 4)});
+            var gameMode = MINIGAMES[Phaser.Math.Between(0, MINIGAMES.length-1)];
+            this.scene.launch(gameMode, {difficultyLevel: Phaser.Math.Between(1, 4)});
         }
     }
 }

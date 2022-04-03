@@ -26,7 +26,7 @@ class DodgeballScene extends Phaser.Scene {
         this.cursors = My.Utils.mapInput(this);
         this.player = createPlayer(this, 500, 300);
 
-        this.add.text(400, 16, 'Mini Game', {fontSize: '32px', fill: '#000'});
+        this.add.text(400, 16, 'Dodgeball', {fontSize: '32px', fill: '#000'});
         this.timerText = this.add.text(800, 16, '5s', {fontSize: '32px', fill: '#000'})
 
         // Add a game timer to know when to return to main game

@@ -6,10 +6,11 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 0 }
+            gravity: { y: 0 },
+            // debug: true
         }
     },
-    scene: [MainScene, GUIScene, DodgeballScene]
+    scene: [MainScene, GUIScene, DodgeballScene, ArrowsScene]
 };
 
 var game = new Phaser.Game(config);
