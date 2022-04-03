@@ -5,11 +5,12 @@ class MainScene extends Phaser.Scene {
 
     preload() {
         console.log('preloading MainScene');
-        this.load.image('portal', 'img/portal.png');
-        this.load.spritesheet('green_guy_spritesheet', 'img/spritesheet2.png', {frameWidth: 256, frameHeight: 256});
+        this.load.spritesheet('portal', 'img/ss_portal.png', {frameWidth: 256, frameHeight: 256})
+        this.load.spritesheet('green_guy_spritesheet', 'img/spritesheet2_centered.png', {frameWidth: 256, frameHeight: 256});
     }
 
     init_animations() {
+        // PLAYER
         this.anims.create({
             key: 'idle',
             repeat: -1,
@@ -40,18 +41,30 @@ class MainScene extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('green_guy_spritesheet', {start: 12, end: 14}),
             frameRate: 5
         })
+
+        // PORTAL
+        this.anims.create({
+            key: 'portal_idle',
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers('portal', {start: 0, end: 2}),
+            frameRate: 5
+        })
     }
 
     create() {
         console.log('Creating MainScene');
 
         this.init_animations();
-        this.cursors = this.input.keyboard.createCursorKeys();
+        this.cursors =My.Utils.mapInput(this);
+        console.log(this.cursors);
 
         // (( TEMPORARY ))
         // Add a portal we can use to go to a minigame
         this.portal = this.physics.add.staticSprite(400, 300, 'portal')
-        this.portal.scale = 0.5
+        this.portal.setBodySize(128, 128, true);
+        this.portal.setDisplaySize(128, 128);
+        
+        this.portal.anims.play('portal_idle')
 
         // Create the player
         this.player = createPlayer(this);
@@ -65,8 +78,10 @@ class MainScene extends Phaser.Scene {
         });
 
         // Since we hid when pausing, we need to become visible again!
-        this.events.on('resume', () => {
-            this.scene.setVisible(true);
+        this.events.on('resume', (scene, data) => {
+            if(!this.scene.isVisible()) {
+                this.scene.setVisible(true);
+            }
         })
     }
 
@@ -78,7 +93,7 @@ class MainScene extends Phaser.Scene {
         if(this.cursors.space.isDown && this.physics.overlap(this.player, this.portal)) {
             this.scene.pause();
             this.scene.setVisible(false);
-            this.scene.launch('dodgeball');
+            this.scene.launch('dodgeball', {difficultyLevel: Phaser.Math.Between(1, 4)});
         }
     }
 }
