@@ -7,14 +7,34 @@ class DodgeballScene extends Phaser.Scene {
     preload() {
         console.log('preloading dodgeball');
         this.load.spritesheet('red_spritesheet', 'img/spritesheet_red.png', {frameWidth: 256, frameHeight: 256});
+        this.load.image('overlay_failed', 'img/overlay_failed.png');
+        this.load.image('overlay_passed', 'img/overlay_passed.png');
     }
 
-    endGame() {
-        this.scene.stop()
-        this.scene.resume('MainScene', {source: 'minigame'})
+    endGame(success) {
+        this.player.allowMovement = false;
+        this.scene.pause()
+        this.scene.launch('fadescene', {
+            peakCb: () => {
+                console.log('stopping dodgeball')
+                this.scene.stop();
+                this.mainScene.scene.setVisible(true);     
+            },
+            doneCb: () => {
+                console.log('resuming main')
+                this.mainScene.scene.resume();
+            },
+            fadeDuration: 500,
+            peakDuration: 1000,
+            image_tag: success ? 'overlay_passed' : 'overlay_failed',
+            style: 'FADE_INOUT'
+        });
     }
 
     create(data) {
+        console.log('setting mainScene')
+        console.log(data.mainScene)
+        this.mainScene = data.mainScene;
         console.log(`creating dodgeball scene with difficulty ${data.difficultyLevel}`)
         this.anims.create({
             key: 'red_idle',
@@ -43,7 +63,7 @@ class DodgeballScene extends Phaser.Scene {
         this.physics.add.collider(this.redGroup);
         this.physics.add.collider(this.player, this.redGroup, () => {
             console.log('FAILED')
-            this.endGame();
+            this.endGame(false);
         });
 
         // Spawn new balls at an interval, based on difficulty
@@ -66,6 +86,7 @@ class DodgeballScene extends Phaser.Scene {
                 redBall.setRandomPosition();
                 redBall.x -= vel.x * 1000;
                 redBall.y -= vel.y * 1000;
+                redBall.body.setCircle(128);
                 this.redGroup.add(redBall);
 
                 // The group sets velocity to 0, need to get in there and fix that
@@ -82,7 +103,7 @@ class DodgeballScene extends Phaser.Scene {
         this.player.update(time, dt);
         var secondsRemaining = this.myTimer.getRemainingSeconds();
         if(secondsRemaining <= 0) {
-            this.endGame();
+            this.endGame(true);
             console.log('SURVIVED')
         }
         else {

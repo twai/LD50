@@ -53,6 +53,10 @@ class MainScene extends Phaser.Scene {
         })
     }
 
+    requestResume(data) {
+        this.scene.setVisible(true);
+    }
+
     create() {
         console.log('Creating MainScene');
 
@@ -94,9 +98,11 @@ class MainScene extends Phaser.Scene {
         // If we press space while overlapping the portal, start a minigame!
         if(this.cursors.space.isDown && this.physics.overlap(this.player, this.portal)) {
             this.scene.pause();
+            // this.player.allowMovement = false;
+
             this.scene.setVisible(false);
             var gameMode = MINIGAMES[Phaser.Math.Between(0, MINIGAMES.length-1)];
-            this.scene.launch(gameMode, {difficultyLevel: Phaser.Math.Between(1, 4)});
+            this.scene.launch(gameMode, {difficultyLevel: Phaser.Math.Between(1, 4), mainScene: this});
         }
     }
 }

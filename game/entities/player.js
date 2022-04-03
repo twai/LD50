@@ -1,5 +1,6 @@
 function createPlayer(scene, x, y) {
     var sprite = scene.physics.add.sprite(x || 128, y || 128, 'green_guy_spritesheet');
+    sprite.body.setCircle(128);
     const spriteSize = {x: 256, y: 256};
     // sprite.setSize()
     sprite.scale = 0.25;
@@ -92,7 +93,7 @@ function createPlayer(scene, x, y) {
         else if (this.pressed.right > 0 || this.pressed.left > 0) {
             this.pressed.right = 0;
             this.pressed.left = 0;
-            this.setSize(spriteSize.x, spriteSize.y, true);
+            this.setCircle(128, 0, 0);
             this.anims.play('idle');
         }
     }

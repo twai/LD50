@@ -7,10 +7,10 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 0 },
-            // debug: true
+            debug: true
         }
     },
-    scene: [MainScene, GUIScene, DodgeballScene, ArrowsScene]
+    scene: [MainScene, GUIScene, DodgeballScene, ArrowsScene, FadeScene]
 };
 
 var game = new Phaser.Game(config);

@@ -8,14 +8,32 @@ class ArrowsScene extends Phaser.Scene {
         console.log('preloading arrows');
         // this.load.spritesheet('red_spritesheet', 'img/spritesheet_red.png', {frameWidth: 256, frameHeight: 256});
         this.load.image('red_arrow', 'img/arrow_down.png');
+        this.load.image('overlay_failed', 'img/overlay_failed.png');
+        this.load.image('overlay_passed', 'img/overlay_passed.png');
     }
 
-    endGame() {
-        this.scene.stop()
-        this.scene.resume('MainScene', {source: 'minigame'})
+    endGame(success) {
+        this.player.allowMovement = false;
+        this.scene.pause()
+        this.scene.launch('fadescene', {
+            peakCb: () => {
+                console.log('stopping arrows')
+                this.scene.stop();
+                this.mainScene.scene.setVisible(true);     
+            },
+            doneCb: () => {
+                console.log('resuming main')
+                this.mainScene.scene.resume();
+            },
+            fadeDuration: 500,
+            peakDuration: 1000,
+            image_tag: success ? 'overlay_passed' : 'overlay_failed',
+            style: 'FADE_INOUT'
+        });
     }
 
     create(data) {
+        this.mainScene = data.mainScene;
         console.log(`creating arrows scene with difficulty ${data.difficultyLevel}`)
         // this.anims.create({
         //     key: 'red_idle',
@@ -30,7 +48,7 @@ class ArrowsScene extends Phaser.Scene {
         // Add a game timer to know when to return to main game
         this.myTimer = this.time.addEvent({delay: 5000, callback: () => {
             console.log('SURVIVED')
-            this.endGame();
+            this.endGame(true);
         }});
 
         this.spawnArrowWave();
@@ -111,7 +129,7 @@ class ArrowsScene extends Phaser.Scene {
         });
         this.physics.add.collider(this.player, this.arrowGroup, () => {
             console.log('FAILED');
-            this.endGame();
+            this.endGame(false);
         });
         console.log('creating arrows to drop..')
         this.arrowsToDrop = [...Phaser.Utils.Array.NumberArray(0, 15)];
